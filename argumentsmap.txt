@@ -1,0 +1,32 @@
+
+# only flag Tumbo needs is -h or --help?
+config opts:
+    DEFAULT_CONFIG_PATH  ->  where Tumbo and its aliases live
+    DEFAULT_SHELL_SOURCE  ->  where to put zipped aliases when source func is called
+    TRUNCATE_SOURCE ->  only for not appending to _aliases or rc files
+                        > flag for non-truncate for rc files?
+
+$ tumbo     |  new     |    alias     -> writes alias to a type, or uses a default location from config
+            |          |    type      -> defines new file for kind of alias to track
+            |
+            |
+            |  list    |      *       -> no opts or *glob will list all aliases
+            |  list    |  type/types  -> prints defined alias types
+            |  list    |   {string}   -> tries to validate str as type that's been defined,
+            |                            if so then will list the aliases under this type
+            |  
+            |  
+            |  search  |   {string}   -> searches in order:
+            |                            type, alias, content
+            |  
+            |  
+            |  update  |     alias    -> edits alias content
+            |          |     type     -> alters type name
+            |  
+            |  
+            |  remove  |     alias    -> deletes line under alias type
+            |          |     type     -> deletes file for alias type, prompts before
+            |  
+            |  
+            |  source  |  (doesn't take an argument)  -> unpacks all args to $DEFAULT_SHELL_SOURCE
+            |                         
