@@ -62,8 +62,13 @@ def parse(args: list) -> dict:
                         throwInvalid(5, '')
 
                     elif argsMap['func'] == 'list':
-                        printBar(f"attempting to list aliases of type '{cur}'", cur)
-                        argsMap['list'] = cur
+                        if cur == 'type':
+                            argsMap['list'] = "/\\"
+                            printBar("listing defined alias types", '')
+
+                        else:
+                            printBar(f"attempting to list aliases of type '{cur}'", cur)
+                            argsMap['list'] = cur
 
                     else:
                         printBar(f"searching for '{cur}'", cur)
