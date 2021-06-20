@@ -3,7 +3,7 @@ def parse(args: list) -> dict:
     from typing import Counter
     from utils import throwInvalid
 
-    argsMap = {'func': ''}
+    argsMap = {'func': '', 'help': False}
     validSet = [
                 'new',
                 'list',
@@ -35,7 +35,7 @@ def parse(args: list) -> dict:
         if isHelp(cur):
             argsMap['help'] = True
 
-        if cur in validSet:
+        elif cur in validSet:
             if len(argsMap['func']) < 1:
                 argsMap['func'] = cur
             else:
