@@ -28,7 +28,8 @@ def parse(args: list) -> dict:
         print('-' * len(tmp))
 
 
-    #reduce args into dict to eval
+    # reduce args into dict to eval
+    # queue based, so 'help' order is irrelevant
     while args:
         cur = args[0]
 
