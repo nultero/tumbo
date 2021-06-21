@@ -4,7 +4,6 @@ from sys import argv
 from utils import drawCodes
 from parser import parse
 from funcs import evalArgs
-from os import path
 
 DEFAULT_CONFIG_DIR_PATH = ''  # main path Tumbo sends aliases to
 DEFAULT_SHELL_SOURCE_PATH = '' # .bash_aliases, .zsh_aliases, a .rc, etc.
@@ -25,7 +24,6 @@ def main():
 
         if not isConfigEmpty(rgs):
             rgs.update(parse(argv[1:]))
-            print(rgs)
             evalArgs(rgs)
 
         else:

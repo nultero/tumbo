@@ -17,6 +17,12 @@ def passesDirCheck(args: dict) -> bool:
         print(f"offending path: '{args['conf']}'")
 
 
+class _internals:
+    def TypeSearch(args: dict, match: str) -> list:
+        from os import listdir
+        return [f for f in listdir(args['conf']) if match in f]
+
+
 def helpFunc(args: dict) -> None:
     from helps import Helper
     if len(args['func']) > 1:
@@ -31,13 +37,23 @@ def newFunc(args: dict) -> None:
     print('pop')
 
 def lsFunc(args: dict) -> None:
+    from os import listdir
     if 'list' in args.keys():
-        from os import listdir
         if args['list'] == '/\\': # 'type' argument
             [print(i) for i in listdir(args['conf'])]
 
         else:
-            print('lop')
+            ls = _internals.TypeSearch(args, args['list'])
+            if len(ls) > 0:
+                for i in ls:
+                        print(f"   '{args['list']}' found in '{i}'")
+                        if input(f"   list contents of '{i}'? (ENTER for yes) ") == "":
+                            print("\n" + open((args['conf'] + '/' + i), 'r').read())
+            else:
+                print(" no matching types found for '%s'" % args['list'])
+
+    else:
+        [print(i) for i in listdir(args['conf'])]
             
 
 
