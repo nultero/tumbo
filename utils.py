@@ -1,14 +1,13 @@
-
 def drawCodes(match: str) -> str:
     tmp = ""
     cases = {
-        'tumbo': """    
+        "tumbo": """    
       /^__^\\
      / .  . \\
     /        \\
    /  \/  \/  \\
    \__________/""",
-        'tumboHat': """    
+        "tumboHat": """    
        _____
       |     |
    ___|_____|___
@@ -16,8 +15,7 @@ def drawCodes(match: str) -> str:
     /        \\
    /  \/  \/  \\
    \__________/""",
-
-        'tumboNoArgs': f"""    
+        "tumboNoArgs": f"""    
      /^__^\     
     / .  . \\
    /        \\\u261E  no args given to Tumbo
@@ -29,10 +27,11 @@ def drawCodes(match: str) -> str:
 
     return tmp
 
+
 def drawCodesArg(match: str, arg: str):
     tmp = ""
     cases = {
-    'tumboArg': f"""    
+        "tumboArg": f"""    
      /^__^\     {arg}
     / .  . \\ / 
    /        \\
@@ -43,9 +42,6 @@ def drawCodesArg(match: str, arg: str):
         tmp += cases[match]
 
     return tmp
-
-
-
 
 
 def throwInvalid(err: int, arg: str):

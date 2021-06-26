@@ -1,16 +1,14 @@
-
 class Helper:
-
     def __init__(self, rg: str, args: dict):
         self.args = args
         helpSet = {
-            'new': self.New,
-            'list': self.Ls,
-            'search': self.Search,
-            'source': self.Source,
-            'remove': self.Remove,
-            'update': self.Update,
-            '*': self.All,
+            "new": self.New,
+            "list": self.Ls,
+            "search": self.Search,
+            "source": self.Source,
+            "remove": self.Remove,
+            "update": self.Update,
+            "*": self.All,
         }
         helpSet[rg]()
 
