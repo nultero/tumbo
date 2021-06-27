@@ -1,4 +1,7 @@
 #####<<internals>>########
+from os import read
+
+
 class _I:
 
     """Extra reusables for the functions to borrow in logic."""
@@ -41,12 +44,10 @@ class _I:
 
     def TypeSearch(conf: str, match: str) -> list:
         from os import listdir
-
         return sorted([f for f in listdir(conf) if match in f])
 
     def Types(conf: str) -> dict:
         from os import listdir
-
         return {i: f for i, f in sorted(enumerate(listdir(conf)))}
 
     def InputInTypes(conf: str, inputStr: str) -> str:
@@ -94,7 +95,7 @@ class _I:
     def ConfirmChanges() -> bool:
         choice = input(f"CONFIRM change? [ y / n ] : ")
         while choice != "y" and choice != "n":
-            print(" --->  Invalid input.")
+            print("\n --->  Invalid input.")
             choice = input(f"CONFIRM change? [ y / n ] : ")
         return True if choice == "y" else False
 
@@ -112,6 +113,42 @@ def helpFunc(args: dict) -> None:
     else:
         Helper("*", args)
 
+
+def searchFunc(args: dict) -> None:
+
+    if "search" not in args.keys():
+        args["search"] = input("> search for? ")
+    
+    srch = args["search"]
+    tumbo = {}
+    
+    for ty in _I.Types(args["conf"]).values():
+        tumbo.update(_I.Aliases(
+            args["conf"] + "/" + ty
+        ))
+
+    while tumbo:
+        cut = []
+        for k, v in tumbo.items():
+            if srch not in k and srch not in v:
+                cut.append(k)
+
+        [tumbo.pop(k) for k in cut]
+        print(">"*5)
+        if len(tumbo) == 1:
+            [print(" >> " + _I.AliasString(k, v)) for k,v in tumbo.items()]
+            quit()
+
+        elif len(tumbo) == 0:
+            print("no results found")
+            quit()
+
+        [print(_I.AliasString(k, v)) for k,v in tumbo.items()]
+        print("<"*5)
+        srch = input("\nnew string to cut down results? (ENTER to quit) : ")
+        if len(srch) == 0:
+            quit()
+    
 
 def newFunc(args: dict) -> None:
 
@@ -174,7 +211,7 @@ def updateFunc(args: dict) -> None:
 
     def _grabType(conf: str, inputProxy: str) -> str:
         f = _I.InputInTypes(conf, inputStr=inputProxy)
-        print(f"(chosen type: '{f.split('/')[-1]}')")
+        print(f"(chosen type: '{f.split('/')[-1]}')\n")
         return f
 
     if args["secondary"] == "type":
@@ -196,7 +233,7 @@ def updateFunc(args: dict) -> None:
         if newAlias == "":
             newAlias = key
 
-        print(f">---- current alias content is '{aliases[key]}'")
+        print(f"\n>---- current alias content is '{aliases[key]}'")
         newContent = input("updated alias' content? (ENTER to keep current) : ")
         if newContent == "":
             newContent = aliases[key]
@@ -238,7 +275,7 @@ def evalArgs(args: dict):  # the actual calls
             "help": helpFunc,
             "new": newFunc,
             "list": lsFunc,
-            "search": helpFunc,
+            "search": searchFunc,
             "update": updateFunc,
             "remove": helpFunc,
             "source": helpFunc,
