@@ -1,7 +1,4 @@
 #####<<internals>>########
-from os import read
-
-
 class _I:
 
     """Extra reusables for the functions to borrow in logic."""
@@ -12,7 +9,7 @@ class _I:
     def PrintTypes(conf: str) -> None:
         from os import listdir
 
-        [print(i) for i in sorted(listdir(conf))]
+        [print(f"|>  {i}") for i in sorted(listdir(conf))]
 
     def Aliases(conf: str) -> dict:
         import json
@@ -54,6 +51,14 @@ class _I:
         tmp = f"\n/// defined types in: {conf} \\\\\\"
         print(tmp + "\n" + "-" * len(tmp))
         aliasTypes = _I.Types(conf)
+
+        if len(aliasTypes) < 1:
+            from utils import drawCodes
+            print(drawCodes("tumbo") + "\n\n")
+            print("|>  there are no defined types available")
+            print("|>  try running 'tumbo new type'")
+            quit()
+
         [print(f" {i+1}. {f}") for i, f in aliasTypes.items()]
         try:
             i = int(input(inputStr)) - 1
@@ -114,6 +119,35 @@ def helpFunc(args: dict) -> None:
         Helper("*", args)
 
 
+
+def sourceFunc(args: dict) -> None:
+    import json
+
+    types = _I.Types(args["conf"])
+    aliases = ""
+
+    for key, val in types.items():
+        typeName = args["conf"] + "/" + val
+
+        with open(typeName, "r") as dataFile:
+            typedAliases = json.load(dataFile)
+        
+            aliases += f"#####>  {val}  <##### \n"
+            for short, contents in typedAliases.items():
+                aliases += _I.AliasString(short, contents) + "\n"
+
+            aliases += "\n" * 2
+
+    trunc = "w" if args["trunc"] else "a"
+
+    with open(args["source"], trunc) as f:
+        f.write(aliases)
+    
+    from utils import drawCodes
+    print(drawCodes("tumboHat"))
+
+
+
 def searchFunc(args: dict) -> None:
 
     if "search" not in args.keys():
@@ -150,19 +184,18 @@ def searchFunc(args: dict) -> None:
             quit()
     
 
+
 def newFunc(args: dict) -> None:
-
     args = _I.CheckSecondaryArg(args, "new")
-
     if args["secondary"] == "type":
-        ty = input("new type name: ")
+        ty = input("new alias TYPE name: ")
         loc = args["conf"] + "/" + ty
         try:
             with open(loc, "w") as f:
                 import json
-
                 d = {}
                 json.dump(d, f)
+                print("created type: '" + ty + "' in " + loc)
 
         except FileExistsError:
             print("!! problem creating new type:")
@@ -179,6 +212,7 @@ def newFunc(args: dict) -> None:
         with open(f, "w") as out:
             json.dump(aliases, out)
         print("> done!")
+
 
 
 def lsFunc(args: dict) -> None:
@@ -206,25 +240,70 @@ def lsFunc(args: dict) -> None:
         _I.PrintTypes(args["conf"])
 
 
-def updateFunc(args: dict) -> None:
-    args = _I.CheckSecondaryArg(args, "update")
 
-    def _grabType(conf: str, inputProxy: str) -> str:
-        f = _I.InputInTypes(conf, inputStr=inputProxy)
-        print(f"(chosen type: '{f.split('/')[-1]}')\n")
-        return f
+# 'update' and 'remove' context methods
+def _grabType(conf: str, inputProxy: str) -> str:
+    f = _I.InputInTypes(conf, inputStr=inputProxy)
+    print(f"(chosen type: '{f.split('/')[-1]}')\n")
+    return f
+
+def _grabContext(args: dict, funcName: str):
+    args = _I.CheckSecondaryArg(args, funcName)
+    if args["secondary"] == "type":
+        inputProx = "type to rename? " if funcName == "update" else "type to remove? "
+        f = _grabType(args["conf"], inputProxy=("\n" + inputProx))
+
+    elif args["secondary"] == "alias":
+        inputProx = "type alias is under? " if funcName == "update" else "type alias to remove is under? "
+        f = _grabType(args["conf"], inputProxy=("\n" + inputProx))
+
+    return [args, f]
+
+
+
+def removeFunc(args: dict) -> None:
+
+    ls = _grabContext(args, funcName="remove")
+    args = ls[0]
+    f = ls[1]
 
     if args["secondary"] == "type":
-        f = _grabType(args["conf"], inputProxy="\ntype to rename? ")
+        print("\n->   STAGING   <-")
+        print(f"REMOVING   '{f}'")
+        if _I.ConfirmChanges():
+            from os import remove
+            remove(f)
+            print(f"done! removed -> '{f}'")
+
+    elif args["secondary"] == "alias":
+        key = _I.GetAlias(f, "remove")
+        aliases = _I.Aliases(f)
+        print("\n->   STAGING   <-")
+        print(f"REMOVING   '{key}'")
+        print(f"FROM       '{f}'")
+        if _I.ConfirmChanges():
+            import json
+            aliases.pop(key)
+            print(f"> removed -> {key}")
+            with open(f, "w") as fl:
+                json.dump(aliases, fl)
+            print(f"> done!")
+
+
+
+def updateFunc(args: dict) -> None:
+    ls = _grabContext(args, funcName="update")
+    args = ls[0]
+    f = ls[1]
+
+    if args["secondary"] == "type":
         newName = input("\nnew name for this renamed type? ")
         from os import rename
-
         newPath = args["conf"] + "/" + newName
         rename(f, newPath)
         print("> done!")
 
     elif args["secondary"] == "alias":
-        f = _grabType(args["conf"], inputProxy="\ntype alias is under? ")
         key = _I.GetAlias(f, "update")
         aliases = _I.Aliases(f)
 
@@ -249,6 +328,7 @@ def updateFunc(args: dict) -> None:
             with open(f, "w") as fl:
                 json.dump(aliases, fl)
             print("> done!")
+
 
 
 def passesDirCheck(args: dict) -> bool:
@@ -277,7 +357,7 @@ def evalArgs(args: dict):  # the actual calls
             "list": lsFunc,
             "search": searchFunc,
             "update": updateFunc,
-            "remove": helpFunc,
-            "source": helpFunc,
+            "remove": removeFunc,
+            "source": sourceFunc,
         }
         do[_fn(args)](args)
