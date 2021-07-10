@@ -20,7 +20,7 @@ def parse(args: list) -> dict:
     # reduce args into dict to eval
     # queue based, so 'help' order is irrelevant
     while args:
-        cur = args[0]
+        cur = args.pop(0)
 
         if isHelp(cur):
             argsMap["help"] = True
@@ -68,7 +68,5 @@ def parse(args: list) -> dict:
 
             elif len(argsMap["func"]) < 1:  # no arguments already,
                 throwInvalid(1, cur)  # so first arg is unrecognizable
-
-        args.remove(cur)
 
     return argsMap
