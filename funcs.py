@@ -17,7 +17,7 @@ def sourceFunc(args: dict) -> None:
     types = Lg.Types(args["conf"])
     aliases = ""
 
-    for key, val in types.items():
+    for k, val in types.items():
         typeName = args["conf"] + "/" + val
 
         with open(typeName, "r") as dataFile:
@@ -48,9 +48,12 @@ def searchFunc(args: dict) -> None:
     tumbo = {}
     
     for ty in Lg.Types(args["conf"]).values():
-        tumbo.update(Lg.Aliases(
-            args["conf"] + "/" + ty
-        ))
+        d = Lg.Aliases(args["conf"] + "/" + ty)
+
+        for key, val in d.items(): # tack on a thing to tell where it came from
+            d[key] = val + "#####" + ty
+
+        tumbo.update(d)
 
     while tumbo:
         cut = []
@@ -61,14 +64,21 @@ def searchFunc(args: dict) -> None:
         [tumbo.pop(k) for k in cut]
         print(">"*5)
         if len(tumbo) == 1:
-            [print(" >> " + Lg.AliasString(k, v)) for k,v in tumbo.items()]
-            quit()
+            for k, v in tumbo.items():
+                chunks = v.split("#####")
+                v = chunks[0]
+                aliasType = chunks[1]
+
+                print(f" >> found in type : '{aliasType}'")
+                s = f" >> {Lg.AliasString(k, v)}"
+                print("  -" * int(len(s)/3) + "\n" + s)
+                quit()
 
         elif len(tumbo) == 0:
             print("no results found")
             quit()
 
-        [print(Lg.AliasString(k, v)) for k,v in tumbo.items()]
+        [print(Lg.AliasString(k, v.split("####")[0])) for k,v in tumbo.items()]
         print("<"*5)
         srch = input("\nnew string to cut down results? (ENTER to quit) : ")
         if len(srch) == 0:
@@ -93,7 +103,9 @@ def newFunc(args: dict) -> None:
             print(f"type '{ty}' already exists as file in {args['conf']}")
 
     elif args["secondary"] == "alias":
+
         f = Lg.InputInTypes(args["conf"], inputStr="\ntype to define new alias under? ")
+        
         import json
 
         aliases = Lg.Aliases(f)
@@ -141,7 +153,6 @@ def lsFunc(args: dict) -> None:
 # 'update' and 'remove' context methods
 def _grabType(conf: str, inputProxy: str) -> str:
     f = Lg.InputInTypes(conf, inputStr=inputProxy)
-    print(f"(chosen type: '{f.split('/')[-1]}')\n")
     return f
 
 def _grabContext(args: dict, funcName: str):

@@ -4,6 +4,7 @@ from sys import argv
 from utils import drawCodes
 from parser import parse
 from funcs import evalArgs
+import pathlib
 
 DEFAULT_CONFIG_DIR_PATH = (
     "/home/nultero/.nultero/tumbo"  # main path Tumbo sends aliases to
@@ -15,22 +16,22 @@ TRUNCATE_SOURCE = True  # set to false to have Tumbo append to $SOURCE instead
 # NB: file truncation only triggers when SOURCE is used as an argument
 
 
-def isConfigEmpty(rgs: dict) -> bool:
-    return not len(rgs["conf"]) * len(rgs["source"])
+def isConfigEmpty(args: dict) -> bool:
+    return not len(args["conf"]) * len(args["source"])
 
 
 def main():
 
     if len(argv) > 1:
 
-        rgs = {}
-        rgs["conf"] = DEFAULT_CONFIG_DIR_PATH
-        rgs["source"] = DEFAULT_SHELL_SOURCE_PATH
-        rgs["trunc"] = TRUNCATE_SOURCE
+        args = {}
+        args["conf"] = DEFAULT_CONFIG_DIR_PATH
+        args["source"] = DEFAULT_SHELL_SOURCE_PATH
+        args["trunc"] = TRUNCATE_SOURCE
 
-        if not isConfigEmpty(rgs):
-            rgs.update(parse(argv[1:]))
-            evalArgs(rgs)
+        if not isConfigEmpty(args):
+            args.update(parse(argv[1:]))
+            evalArgs(args)
 
         else:
             print(drawCodes("tumbo"))
