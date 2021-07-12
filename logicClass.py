@@ -44,17 +44,19 @@ class Logic:
 
     def GetAlias(conf: str, action: str) -> str:
 
+        nums = "1234567890"
         aliases = Logic.Aliases(conf)
 
         while aliases:
             Logic.ShowNumberedAliases(aliases)
             i = input("\nwhich alias to " + action + "? ")
 
-            if not i.isalpha():
-                i = int(i) - 1
-                for n, al in enumerate(sorted(aliases.keys())):
-                    if n == i:
-                        return al
+            if len(i) == 1:
+                if i in nums:
+                    i = int(i) - 1
+                    for n, al in enumerate(sorted(aliases.keys())):
+                        if n == i:
+                            return al
 
                 print(f"'{i+1}' is not an option in the aliases above"); quit()
             
