@@ -2,54 +2,64 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"tumbo/cmd/cats"
 
+	"github.com/nultero/tics"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
+var flavorText = tics.Blue(cats.TumboHat())
 
-// rootCmd represents the base command when called without any subcommands
+var confMap = map[string]string{
+	"confFile": "$USER/.config/tumbo/tumbo.yaml",
+	"dataDir":  "$USER/.config/tumbo",
+}
+
+var defaultSettings = []string{
+	"shell flavor: 'bash'",
+	"dashes in dir: 20",
+}
+
+var valCrudArgs = []string{"alias", "type"}
+
 var rootCmd = &cobra.Command{
 	Use:   "tumbo",
-	Short: "an alias manager that wears hats",
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
+	Short: "an alias manager that wears hats\n" + flavorText,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(cats.TumboNoArgs())
 		fmt.Println("\n  (run '-h' or '--help' to see opts)")
 	},
 }
 
-func Execute() {
-	cobra.CheckErr(rootCmd.Execute())
-}
-
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tumbo.yaml)")
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/tumbo/tumbo.yaml)")
 }
 
 func initConfig() {
-	if cfgFile != "" {
 
-		viper.SetConfigFile(cfgFile)
-	} else {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".tumbo")
-	}
-
+	confMap = tics.CobraRootInitBoilerPlate(confMap, true)
+	confPath := confMap["confFile"]
+	viper.SetConfigFile(confPath)
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	// If a config file is found, read it in, else make one with prompt.
+	err := viper.ReadInConfig()
+	if err != nil {
+
+		// TODO replace $SHELL in defaults
+		// actually, that's already an env
+		// maybe just slice shell from env?
+
+		tics.RunConfPrompts("tumbo", confMap, defaultSettings)
+		tics.ThrowQuiet("")
 	}
+}
+
+func Execute() {
+	cobra.CheckErr(rootCmd.Execute())
 }
