@@ -1,4 +1,4 @@
-package cmd
+package serials
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"github.com/nultero/tics"
 )
 
-func toJson(i interface{}) map[string]interface{} {
+func ToJson(i interface{}) map[string]interface{} {
 
 	var j map[string]interface{}
 
@@ -14,7 +14,7 @@ func toJson(i interface{}) map[string]interface{} {
 	if ok {
 		err := json.Unmarshal(b, &j)
 		if err != nil {
-			tics.ThrowSysDescriptor(tics.BlameFunc(toJson), err)
+			tics.ThrowSys(ToJson, err)
 		}
 	}
 

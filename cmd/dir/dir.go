@@ -1,10 +1,10 @@
 package dir
 
 import (
-	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/nultero/tics"
 )
@@ -12,7 +12,7 @@ import (
 func getDir(path string) []fs.FileInfo {
 	f, err := ioutil.ReadDir(path)
 	if err != nil {
-		tics.ThrowSysDescriptor(tics.BlameFunc(getDir), err)
+		tics.ThrowSys(getDir, err)
 	}
 
 	return f
@@ -21,7 +21,7 @@ func getDir(path string) []fs.FileInfo {
 func getFile(path string) []byte {
 	b, err := os.ReadFile(path)
 	if err != nil {
-		tics.ThrowSysDescriptor(tics.BlameFunc(getFile), err)
+		tics.ThrowSys(getFile, err)
 	}
 
 	return b
@@ -39,9 +39,9 @@ func GetDirFiles(path string) []string {
 	return files
 }
 
-func getFromDir(dirName, fileName string) {
-	fmt.Println("placeholder")
-}
+// func getFromDir(dirName, fileName string) {
+// 	fmt.Println("placeholder")
+// }
 
 func GetDirContents(dirName string) map[string]interface{} {
 	m := map[string]interface{}{}
@@ -63,4 +63,16 @@ func notConfig(name string) bool {
 	}
 
 	return true
+}
+
+func SearchInDirNames(dirPath, searchStr string) []string {
+	dir := GetDirFiles(dirPath)
+	matches := []string{}
+	for _, d := range dir {
+		if strings.Contains(d, searchStr) {
+			matches = append(matches, d)
+		}
+	}
+
+	return matches
 }

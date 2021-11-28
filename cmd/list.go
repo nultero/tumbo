@@ -1,13 +1,16 @@
 package cmd
 
 import (
-	"fmt"
+	"tumbo/cmd/out"
 
+	"github.com/nultero/tics"
 	"github.com/spf13/cobra"
 )
 
+var TypeFlag bool
+
 var listCmd = &cobra.Command{
-	Use:   "list {string} (optional)",
+	Use:   "list {string}",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -20,11 +23,22 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if d, ok := confMap["dataDir"]; ok {
+
 			if len(args) == 0 {
-				printAll(d)
+				if TypeFlag {
+					out.PrintDir(d)
+
+				} else {
+					out.PrintAll(d)
+				}
 
 			} else {
-				fmt.Println("yes")
+				if TypeFlag {
+					out.PrintMatchingFileNames(d, args[0])
+
+				} else {
+					out.PrintMatchType(d, args[0])
+				}
 			}
 		}
 	},
@@ -32,14 +46,6 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	s := "makes '" + tics.Blue("list") + "' only print the alias types in Tumbo's dir"
+	listCmd.Flags().BoolVarP(&TypeFlag, "type", "t", false, s)
 }
