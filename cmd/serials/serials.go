@@ -1,22 +1,38 @@
 package serials
 
 import (
-	"encoding/json"
+	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/nultero/tics"
 )
 
-func ToJson(i interface{}) map[string]interface{} {
+func FmtJsonToStrs(js map[string]interface{}) []string {
 
-	var j map[string]interface{}
-
-	b, ok := i.([]byte)
-	if ok {
-		err := json.Unmarshal(b, &j)
-		if err != nil {
-			tics.ThrowSys(ToJson, err)
+	maxLen := 0
+	for alias := range js {
+		if len(alias) > maxLen {
+			maxLen = len(alias)
 		}
 	}
+	maxLen += 3
 
-	return j
+	strs := []string{}
+
+	for alias, cmds := range js {
+		strs = append(strs, fmt.Sprintf(
+			"  %v%v%v\n",
+			tics.Bold(alias),
+			strings.Repeat(" ", maxLen-len(alias)),
+			cmds,
+		))
+	}
+
+	return sortAliases(strs)
+}
+
+func sortAliases(al []string) []string {
+	sort.Strings(al)
+	return al
 }

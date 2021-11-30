@@ -2,9 +2,9 @@ package out
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
-	"tumbo/cmd/dir"
 	"tumbo/cmd/serials"
 
 	"github.com/nultero/tics"
@@ -12,7 +12,7 @@ import (
 )
 
 func PrintAll(dirPath string) {
-	mapOfDir := dir.GetDirContents(dirPath)
+	mapOfDir := tics.GetDirContentsExclusive(dirPath, tics.NotConfig)
 
 	longest := 0
 	for dn := range mapOfDir {
@@ -21,11 +21,19 @@ func PrintAll(dirPath string) {
 		}
 	}
 
-	for dn, vals := range mapOfDir {
-		printDirName(dn, longest)
-		js := serials.ToJson(vals)
-		printTumboJson(js)
-		fmt.Printf("\n")
+	sortedKeys := []string{}
+	for key := range mapOfDir {
+		sortedKeys = append(sortedKeys, key)
+	}
+	sort.Strings(sortedKeys)
+
+	for _, k := range sortedKeys {
+		printDirName(k, longest)
+		if vals, ok := mapOfDir[k]; ok {
+			js := tics.ToJson(vals)
+			printTumboJson(js)
+			fmt.Printf("\n")
+		}
 	}
 }
 
@@ -47,7 +55,7 @@ func printDirName(dn string, ln int) {
 }
 
 func PrintDir(dirPath string) {
-	dirNames := dir.GetDirFiles(dirPath)
+	dirNames := tics.GetDirFilesExclusive(dirPath, tics.NotConfig)
 	fmt.Println(tics.Blue("\\> Types of aliases:"))
 	for _, d := range dirNames {
 		fmt.Println(" ", d)
@@ -56,7 +64,7 @@ func PrintDir(dirPath string) {
 
 func PrintMatchingFileNames(dirPath, arg string) {
 	fmt.Printf("Searching '%v' for types that match '%v': \n", dirPath, tics.Blue(arg))
-	dir := dir.SearchInDirNames(dirPath, arg)
+	dir := tics.SearchInDirNames(dirPath, arg)
 	if len(dir) == 0 {
 		printNoMatches("type", arg)
 
@@ -76,17 +84,18 @@ func subStrFmt(s, subStr string) string {
 
 func PrintMatchType(dirPath, arg string) {
 
-	aliasTypes := dir.SearchInDirNames(dirPath, arg)
+	aliasTypes := tics.SearchInDirNames(dirPath, arg)
 
 	switch len(aliasTypes) {
 	case 0:
 		printNoMatches("type", arg)
 
 	case 1:
-		fmt.Println("successful print")
+		printSingleFile(dirPath, aliasTypes[0])
 
 	default:
-		fmt.Println("select from different opts")
+		file := tics.SelectBetween("multiple matches: select", aliasTypes)
+		printSingleFile(dirPath, file)
 	}
 }
 
@@ -95,24 +104,16 @@ func printNoMatches(kind, arg string) {
 }
 
 func printTumboJson(js map[string]interface{}) {
-	maxLen := 0
-	for alias := range js {
-		if len(alias) > maxLen {
-			maxLen = len(alias)
-		}
-	}
-	maxLen += 3
-
-	for alias, cmds := range js {
-		fmt.Printf(
-			"  %v%v%v\n",
-			tics.Bold(alias),
-			strings.Repeat(" ", maxLen-len(alias)),
-			cmds,
-		)
+	aliases := serials.FmtJsonToStrs(js)
+	for _, ln := range aliases {
+		fmt.Print(ln)
 	}
 }
 
-func printSingleFile(path string) {
+func printSingleFile(dirPath, file string) {
+	b := tics.GetFile(dirPath + "/" + file)
+	js := tics.ToJson(b)
 
+	printDirName(file, 0)
+	printTumboJson(js)
 }
