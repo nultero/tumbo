@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"tumbo/cmd/cats"
+	"tumbo/cmd/serials"
 
 	"github.com/nultero/tics"
 )
@@ -61,4 +63,14 @@ func writeAliasOut(typeName string, aliases map[string]interface{}) {
 	} else {
 		tics.ThrowSys(writeAliasOut, fmt.Errorf("failure in config mapping"))
 	}
+}
+
+func selectAlias(action, colorT string, aliases map[string]interface{}) string {
+	keys := serials.FmtStrKeys(aliases)
+	sort.Strings(keys)
+	chc := tics.SelectBetween(
+		fmt.Sprintf("alias to %v from %v? > ", action, colorT), keys,
+	)
+
+	return chc
 }

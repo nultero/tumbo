@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 	"tumbo/cmd/cats"
 
 	"github.com/nultero/tics"
@@ -24,7 +25,7 @@ var confMap = map[string]string{
 }
 
 var defaultSettings = []string{
-	"shell flavor: 'bash'",
+	"shell flavor: 'bash'", // this default is overridden below, on initializing config
 	"dashes in dir: 20",
 }
 
@@ -55,10 +56,7 @@ func initConfig() {
 	// If a config file is found, read it in, else make one with prompt.
 	err := viper.ReadInConfig()
 	if err != nil {
-
-		// TODOO replace $SHELL in defaults
-		// actually, that's already an env
-		// maybe just slice shell from env?
+		defaultSettings[0] = strings.ReplaceAll(defaultSettings[0], "bash", getShellEnv())
 
 		tics.RunConfPrompts("tumbo", confMap, defaultSettings)
 		tics.ThrowQuiet("") // exits so that run won't be contaminated by not having conf
@@ -67,4 +65,11 @@ func initConfig() {
 
 func Execute() {
 	cobra.CheckErr(rootCmd.Execute())
+}
+
+func getShellEnv() string {
+	shellPath := viper.GetString("SHELL")
+	spl := strings.Split(shellPath, "/")
+	shell := spl[len(spl)-1]
+	return shell
 }

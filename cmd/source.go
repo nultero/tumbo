@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// TODO source for AFTER shell
 var sourceCmd = &cobra.Command{
 	Use:   "source",
 	Short: "bake all aliases into a file and write to $HOME/<shell>_aliases",

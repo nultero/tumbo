@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// TODO newcmd
+// TODO -- new type cmd
 var newCmd = &cobra.Command{
 	Use:   "new [alias, type]",
 	Short: "create a new alias or type of alias",

@@ -62,3 +62,21 @@ func FmtStrKeys(js map[string]interface{}) []string {
 func Split(choice string) string {
 	return strings.Split(choice, gj)[0]
 }
+
+func FmtStrsForSearch(js map[string]interface{}) []string {
+
+	maxLen := getMaxLen(js)
+	strs := []string{}
+
+	for alias, cmds := range js {
+		strs = append(strs, fmt.Sprintf(
+			"%v%v%v",
+			alias,
+			strings.Repeat(" ", maxLen-len(alias)),
+			cmds,
+		))
+	}
+
+	sort.Strings(strs)
+	return strs
+}
