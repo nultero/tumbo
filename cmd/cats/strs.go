@@ -1,6 +1,12 @@
 package cats
 
-import "github.com/nultero/tics"
+import (
+	"fmt"
+	"math/rand"
+	"time"
+
+	"github.com/nultero/tics"
+)
 
 var tumboEars = "\n     /^__^\\\n"
 var tumboBody = []string{
@@ -42,4 +48,21 @@ func TumboNoArgs() string {
 // Returns Tumbo with the stovepipe on.
 func TumboHat() string {
 	return loopOver(hat) + loopOver(tumboBody)
+}
+
+func RandomCat() {
+
+	// if no seed is selected, the rand values below
+	// become deterministic... very boring
+	rand.Seed(time.Now().UnixNano())
+
+	funcs := []func() string{
+		TumboCat,
+		TumboHat,
+	}
+
+	i := rand.Intn(len(funcs))
+	f := funcs[i]
+	s := f()
+	fmt.Println("\n", s)
 }

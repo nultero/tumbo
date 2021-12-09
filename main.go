@@ -1,6 +1,8 @@
 package main
 
-import "tumbo/cmd"
+import (
+	"tumbo/cmd"
+)
 
 func main() {
 	cmd.Execute()

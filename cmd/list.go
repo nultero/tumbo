@@ -7,8 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var TypeFlag bool
-
 var listCmd = &cobra.Command{
 	Use:   "list {string}",
 	Short: "show given aliases / alias types",
@@ -16,7 +14,7 @@ var listCmd = &cobra.Command{
 	Args: cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if d, ok := confMap["dataDir"]; ok {
+		if d, ok := confMap[dataDir]; ok {
 
 			if len(args) == 0 {
 				if TypeFlag {

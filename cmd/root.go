@@ -13,9 +13,14 @@ import (
 var cfgFile string
 var flavorText = tics.Blue(cats.TumboHat())
 
+var TypeFlag bool = false
+
+var dataDir = "dataDir"
+var confFile = "confFile"
+
 var confMap = map[string]string{
-	"confFile": "$USER/.config/tumbo/tumbo.yaml",
-	"dataDir":  "$USER/.config/tumbo",
+	confFile: "$USER/.config/tumbo/tumbo.yaml",
+	dataDir:  "$USER/.config/tumbo",
 }
 
 var defaultSettings = []string{
@@ -51,12 +56,12 @@ func initConfig() {
 	err := viper.ReadInConfig()
 	if err != nil {
 
-		// TODO replace $SHELL in defaults
+		// TODOO replace $SHELL in defaults
 		// actually, that's already an env
 		// maybe just slice shell from env?
 
 		tics.RunConfPrompts("tumbo", confMap, defaultSettings)
-		tics.ThrowQuiet("")
+		tics.ThrowQuiet("") // exits so that run won't be contaminated by not having conf
 	}
 }
 

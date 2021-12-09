@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+//TODO search
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "A brief description of your command",

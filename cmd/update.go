@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// TODO update cmd
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "change any value of an alias, or rename a type of alias",
@@ -20,5 +21,5 @@ var updateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(updateCmd)
 
-	// update config flag, so that it can be called to change conf
+	// TODO  ? update config flag, so that it can be called to change conf
 }
