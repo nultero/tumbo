@@ -8,10 +8,8 @@ import (
 	"github.com/nultero/tics"
 )
 
-// not an empty string, contains blank U+034F
-// I, and nobody else who ever uses my unknown lib will use this
-// codepoint for an alias
-const gj = "͏"
+// Jank way to split on the selected chunk, but it does work.
+const gj = "\033[38;5;206m\u00ad\033[0m"
 
 func GetMaxLen(js map[string]interface{}) int {
 	maxLen := 0
