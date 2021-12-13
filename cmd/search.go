@@ -12,11 +12,10 @@ import (
 
 //TODO search
 var searchCmd = &cobra.Command{
-	Use:   "search",
-	Short: "A brief description of your command",
-
-	Args: cobra.MaximumNArgs(1),
-	Run:  search,
+	Use:   "search [string]",
+	Short: "looks within aliases for matching terms",
+	Args:  cobra.MaximumNArgs(1),
+	Run:   search,
 }
 
 func search(cmd *cobra.Command, args []string) {

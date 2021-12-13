@@ -8,10 +8,23 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list {string}",
+	Use:   "list " + tics.Blue("{string} (optional)"),
 	Short: "show given aliases / alias types",
 
-	Args: cobra.MaximumNArgs(1),
+	Args: cobra.MaximumNArgs(1), //TODO clean up this jank
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		if len(args) != 0 {
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		s := []string{}
+		if d, ok := confMap[dataDir]; ok {
+			s = append(s, tics.GetDirFilesExclusive(d, tics.NotConfig)...)
+		}
+
+		return s, cobra.ShellCompDirectiveNoFileComp
+	},
+
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if d, ok := confMap[dataDir]; ok {

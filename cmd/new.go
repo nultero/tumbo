@@ -12,14 +12,16 @@ var newCmd = &cobra.Command{
 	Use:   "new [alias, type]",
 	Short: "create a new alias or type of alias",
 
-	Args:      cobra.OnlyValidArgs,
+	Args:      cobra.MaximumNArgs(1),
 	ValidArgs: valCrudArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if args[0] == valCrudArgs[0] {
+		arg := checkArgs(args, "new")
+
+		if arg == valCrudArgs[0] {
 			newAlias()
 
-		} else if args[0] == valCrudArgs[1] {
+		} else if arg == valCrudArgs[1] {
 			fmt.Println("arg:", valCrudArgs[1])
 		}
 	},

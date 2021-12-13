@@ -74,3 +74,13 @@ func selectAlias(action, colorT string, aliases map[string]interface{}) string {
 
 	return chc
 }
+
+func checkArgs(args []string, funcName string) string {
+	if len(args) == 0 {
+		s := fmt.Sprintf("`%v` needs a selector:", funcName)
+		choice := tics.SelectBetween(s, valCrudArgs)
+		return choice
+	} else {
+		return args[0]
+	}
+}

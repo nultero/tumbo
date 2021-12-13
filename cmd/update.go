@@ -17,10 +17,12 @@ var updateCmd = &cobra.Command{
 	ValidArgs: valCrudArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if args[0] == valCrudArgs[0] {
+		arg := checkArgs(args, "update")
+
+		if arg == valCrudArgs[0] {
 			updateAlias()
 
-		} else if args[0] == valCrudArgs[1] {
+		} else if arg == valCrudArgs[1] {
 			fmt.Println("arg:", valCrudArgs[1])
 		}
 	},

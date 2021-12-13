@@ -17,10 +17,12 @@ var removeCmd = &cobra.Command{
 	ValidArgs: valCrudArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if args[0] == valCrudArgs[0] {
+		arg := checkArgs(args, "remove")
+
+		if arg == valCrudArgs[0] {
 			removeAlias()
 
-		} else if args[0] == valCrudArgs[1] {
+		} else if arg == valCrudArgs[1] {
 			fmt.Println("arg:", valCrudArgs[1])
 		}
 	},
@@ -41,7 +43,17 @@ func removeAlias() {
 		}
 	}
 
-	writeAliasOut(aliasType, js)
+	prompt := fmt.Sprintf(
+		"are you sure you want to remove %v from %v? [y / N] > ",
+		tics.Blue(rmAlias),
+		tics.Blue(aliasType),
+	)
+
+	if tics.Confirmed(prompt) {
+		writeAliasOut(aliasType, js)
+	} else {
+		fmt.Println("> not confirmed")
+	}
 }
 
 func init() {
