@@ -13,7 +13,7 @@ import (
 // codepoint for an alias
 const gj = "͏"
 
-func getMaxLen(js map[string]interface{}) int {
+func GetMaxLen(js map[string]interface{}) int {
 	maxLen := 0
 	for alias := range js {
 		if len(alias) > maxLen {
@@ -24,7 +24,7 @@ func getMaxLen(js map[string]interface{}) int {
 }
 
 func FmtJsonToStrs(js map[string]interface{}) []string {
-	maxLen := getMaxLen(js)
+	maxLen := GetMaxLen(js)
 	strs := []string{}
 
 	for alias, cmds := range js {
@@ -42,7 +42,7 @@ func FmtJsonToStrs(js map[string]interface{}) []string {
 
 func FmtStrKeys(js map[string]interface{}) []string {
 
-	maxLen := getMaxLen(js)
+	maxLen := GetMaxLen(js)
 	strs := []string{}
 
 	for alias, cmds := range js {
@@ -61,22 +61,4 @@ func FmtStrKeys(js map[string]interface{}) []string {
 
 func Split(choice string) string {
 	return strings.Split(choice, gj)[0]
-}
-
-func FmtStrsForSearch(js map[string]interface{}) []string {
-
-	maxLen := getMaxLen(js)
-	strs := []string{}
-
-	for alias, cmds := range js {
-		strs = append(strs, fmt.Sprintf(
-			"%v%v%v",
-			alias,
-			strings.Repeat(" ", maxLen-len(alias)),
-			cmds,
-		))
-	}
-
-	sort.Strings(strs)
-	return strs
 }
