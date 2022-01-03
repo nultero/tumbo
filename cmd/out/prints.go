@@ -50,20 +50,20 @@ func printDirName(dn string, ln int) {
 	}
 
 	s := "\\> " + dn + " " + strings.Repeat("-", dashes) + "\n"
-	s = tics.MakeT(s).Blue().Str()
+	s = tics.Make(s).Blue().String()
 	fmt.Println(s)
 }
 
 func PrintDir(dirPath string) {
 	dirNames := tics.GetDirFilesExclusive(dirPath, tics.NotConfig)
-	fmt.Println(tics.Blue("\\> Types of aliases:"))
+	fmt.Println(tics.Make("\\> Types of aliases:").Blue().String())
 	for _, d := range dirNames {
 		fmt.Println(" ", d)
 	}
 }
 
 func PrintMatchingFileNames(dirPath, arg string) {
-	fmt.Printf("Searching '%v' for types that match '%v': \n", dirPath, tics.Blue(arg))
+	fmt.Printf("Searching '%v' for types that match '%v': \n", dirPath, tics.Make(arg).Blue().String())
 	dir := tics.SearchInDirNames(dirPath, arg)
 	if len(dir) == 0 {
 		printNoMatches("type", arg)
@@ -78,7 +78,7 @@ func PrintMatchingFileNames(dirPath, arg string) {
 func subStrFmt(s, subStr string) string {
 	return strings.ReplaceAll(
 		s, subStr,
-		tics.Blue(subStr),
+		tics.Make(subStr).Blue().String(),
 	)
 }
 

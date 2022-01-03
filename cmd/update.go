@@ -30,7 +30,7 @@ var updateCmd = &cobra.Command{
 
 func updateAlias() {
 	aliasType := selectType()
-	colorT := tics.Blue(aliasType)
+	colorT := tics.Make(aliasType).Blue().String()
 	aliases := getJsonByType(aliasType)
 
 	choice := selectAlias("update", colorT, aliases)

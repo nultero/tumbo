@@ -37,7 +37,7 @@ func TumboCat() string {
 
 // Returns Tumbo pointing his finger accusingly.
 func TumboNoArgs() string {
-	finger := tics.MakeT("\u261E  no args given to Tumbo").Red().Str()
+	finger := tics.Make("\u261E  no args given to Tumbo").Red().String()
 	return "\n     /^__^\\\n" +
 		"    / .  . \\\n" +
 		"   /        \\" + finger + "\n" +

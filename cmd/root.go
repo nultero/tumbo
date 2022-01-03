@@ -11,8 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-var flavorText = tics.Blue(cats.TumboHat())
+var flavorText = tics.Make(cats.TumboHat()).Blue().String()
 
 var TypeFlag bool = false
 
@@ -25,7 +24,7 @@ var confMap = map[string]string{
 }
 
 var defaultSettings = []string{
-	"shell flavor: 'bash'", // this default is overridden below, on initializing config
+	"shell flavor: 'bash'", // this default is overridden in root, on initializing config
 	"dashes in dir: 20",
 }
 
@@ -43,7 +42,6 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/tumbo/tumbo.yaml)")
 }
 
 func initConfig() {

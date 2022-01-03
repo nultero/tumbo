@@ -28,7 +28,7 @@ func FmtJsonToStrs(js map[string]interface{}) []string {
 	for alias, cmds := range js {
 		strs = append(strs, fmt.Sprintf(
 			"  %v%v%v\n",
-			tics.Bold(alias),
+			tics.Make(alias).Bold().String(),
 			strings.Repeat(" ", maxLen-len(alias)),
 			cmds,
 		))

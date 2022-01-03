@@ -30,7 +30,7 @@ var removeCmd = &cobra.Command{
 
 func removeAlias() {
 	aliasType := selectType()
-	colorT := tics.Blue(aliasType)
+	colorT := tics.Make(aliasType).Blue().String()
 	aliases := getJsonByType(aliasType)
 	choice := selectAlias("remove", colorT, aliases)
 
@@ -45,8 +45,8 @@ func removeAlias() {
 
 	prompt := fmt.Sprintf(
 		"are you sure you want to remove %v from %v? [y / N] > ",
-		tics.Blue(rmAlias),
-		tics.Blue(aliasType),
+		tics.Make(rmAlias).Blue().String(),
+		tics.Make(aliasType).Blue().String(),
 	)
 
 	if tics.Confirmed(prompt) {

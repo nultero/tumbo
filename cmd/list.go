@@ -8,7 +8,7 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list " + tics.Blue("{string} (optional)"),
+	Use:   "list " + tics.Make("{string} (optional)").Blue().String(),
 	Short: "show given aliases / alias types",
 
 	Args: cobra.MaximumNArgs(1), //TODO clean up this jank
@@ -51,6 +51,8 @@ var listCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-	s := "makes '" + tics.Blue("list") + "' only print the alias types in Tumbo's dir"
+	s := "makes '" +
+		tics.Make("list").Blue().String() +
+		"' only print the alias types in Tumbo's dir"
 	listCmd.Flags().BoolVarP(&TypeFlag, "type", "t", false, s)
 }

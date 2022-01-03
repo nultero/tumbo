@@ -61,14 +61,14 @@ func searchWithin(fileName, shortName, arg string) {
 	}
 
 	if len(aliases) > 0 {
-		fmt.Printf("--- in %v:\n", tics.DarkBlue(shortName))
+		fmt.Printf("--- in %v:\n", tics.Make(shortName).DarkBlue().String())
 		maxLen := getMaxLen(&aliases)
 		for i := range aliases {
 			fmt.Printf(
 				"%v%v%v\n",
-				strings.ReplaceAll(aliases[i], arg, tics.Pink(arg)),
+				strings.ReplaceAll(aliases[i], arg, tics.Make(arg).Pink().String()),
 				strings.Repeat(" ", maxLen-len(aliases[i])),
-				strings.ReplaceAll(cmds[i], arg, tics.Pink(arg)),
+				strings.ReplaceAll(cmds[i], arg, tics.Make(arg).Pink().String()),
 			)
 		}
 		fmt.Println("")
@@ -87,6 +87,6 @@ func getMaxLen(strs *[]string) int {
 
 func init() {
 	rootCmd.AddCommand(searchCmd)
-	s := "makes '" + tics.Blue("search") + "' only search the alias types in Tumbo's dir"
+	s := "makes '" + tics.Make("search").Blue().String() + "' only search the alias types in Tumbo's dir"
 	searchCmd.Flags().BoolVarP(&TypeFlag, "type", "t", false, s)
 }

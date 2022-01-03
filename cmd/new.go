@@ -29,7 +29,7 @@ var newCmd = &cobra.Command{
 
 func newAlias() {
 	aliasType := selectType()
-	colorT := tics.Blue(aliasType)
+	colorT := tics.Make(aliasType).Blue().String()
 	fmt.Printf("alias to implement in %v? > ", colorT)
 	alias := tics.GetInput()
 
@@ -42,14 +42,14 @@ func newAlias() {
 	if _, ok := aliases[alias]; ok {
 		s := fmt.Sprintf(
 			"alias `%v` found in aliases, update anyway? [ y / N ] : ",
-			tics.Bold(alias))
+			tics.Make(alias).Bold().String())
 
 		if !tics.Confirmed(s) {
 			tics.ThrowQuiet("")
 		}
 	}
 
-	fmt.Printf("what should %v be aliased to? > ", tics.Blue(alias))
+	fmt.Printf("what should %v be aliased to? > ", tics.Make(alias).Blue().String())
 	aliasContent := tics.GetInput()
 	aliasContent = sanitizeAliasContent(aliasContent)
 
