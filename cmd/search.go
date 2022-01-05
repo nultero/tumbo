@@ -17,6 +17,8 @@ var searchCmd = &cobra.Command{
 	Run:   search,
 }
 
+// TODOOOO if search returns no results, mention that explicitly
+
 func search(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
 		fmt.Print("search for? > ")

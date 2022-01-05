@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/nultero/tics"
 	"github.com/spf13/cobra"
@@ -22,7 +23,7 @@ var newCmd = &cobra.Command{
 			newAlias()
 
 		} else if arg == valCrudArgs[1] {
-			fmt.Println("arg:", valCrudArgs[1])
+			newType()
 		}
 	},
 }
@@ -55,6 +56,37 @@ func newAlias() {
 
 	aliases[alias] = aliasContent
 	writeAliasOut(aliasType, aliases)
+}
+
+func newType() {
+	fmt.Print("new alias type name? > ")
+	typeName := tics.GetInput()
+
+	if len(typeName) == 0 {
+		tics.ThrowQuiet("new alias types must be at least 1 letter long")
+	}
+
+	if d, ok := confMap[dataDir]; ok {
+
+		// check new name does not clash w/ existing one
+		posConflicts := tics.SearchInDirNames(d, typeName)
+		if len(posConflicts) > 0 {
+			for _, existingName := range posConflicts {
+				if typeName == existingName {
+					tics.ThrowQuiet(tics.Make("this type name already exists").DarkBlue().String())
+				}
+			}
+		}
+
+		// all good, make new type
+		path := d + "/" + typeName
+		err := os.WriteFile(path, []byte("{}"), tics.Perm)
+		if err != nil {
+			tics.ThrowSys(newType, err)
+		}
+
+		fmt.Println("created blank type " + tics.Make(typeName).Blue().String())
+	}
 }
 
 func init() {
